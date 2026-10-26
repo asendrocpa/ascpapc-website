@@ -50,6 +50,16 @@ section { padding: 72px 0; }
 .card h3 { font-family: inherit; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
 .card p { margin: 0; color: var(--ink-soft); font-size: 16px; }
 
+/* services */
+.services { background: linear-gradient(180deg, #eef5f5 0%, #ffffff 55%); }
+.eyebrow { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.svc { position: relative; overflow: hidden; border-top: 4px solid var(--c); box-shadow: 0 1px 2px rgba(20,32,46,.04); transition: transform .18s ease, box-shadow .18s ease; }
+.svc:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(20,32,46,.10); }
+.svc::after { content: ""; position: absolute; right: -40px; bottom: -40px; width: 120px; height: 120px; border-radius: 50%; background: var(--c); opacity: .06; }
+.ico { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 16px; background: color-mix(in srgb, var(--c) 14%, white); color: var(--c); }
+.ico svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: reduce) { .svc { transition: none; } .svc:hover { transform: none; } }
+
 .contact { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
 .contact .card strong { display: block; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px; }
 .contact .card a { font-weight: 600; text-decoration: none; }
