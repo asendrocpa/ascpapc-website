@@ -17,6 +17,17 @@
 	.form-sample .line { border-bottom: 1px solid #9aa6b2; height: 26px; }
 	.check { display: flex; gap: 12px; align-items: flex-start; margin-top: 18px; }
 	.box { flex: 0 0 22px; height: 22px; border: 2px solid var(--ink); border-radius: 3px; margin-top: 2px; }
+	.signup { border: 1px solid var(--line); border-top: 5px solid var(--accent); border-radius: var(--radius); padding: 24px; background: #f3f8f8; max-width: 640px; margin: 8px 0 12px; }
+	.signup label { display: block; font-weight: 600; margin-bottom: 14px; }
+	.signup label small { font-weight: 400; color: var(--ink-soft); }
+	.signup input[type=text], .signup input[type=tel] { display: block; width: 100%; margin-top: 6px; padding: 10px 12px; font: inherit; border: 1px solid #b8c3cd; border-radius: 8px; background: #fff; }
+	.signup .agree { display: flex; gap: 12px; align-items: flex-start; font-weight: 400; margin: 18px 0; }
+	.signup .agree input { width: 20px; height: 20px; margin-top: 3px; flex: 0 0 20px; }
+	.signup button { font: inherit; font-weight: 600; padding: 11px 22px; border: 0; border-radius: 999px; background: var(--accent); color: #fff; cursor: pointer; }
+	.signup button:disabled { opacity: .6; cursor: default; }
+	.hp { position: absolute; left: -9999px; }
+	.msg { margin-top: 14px; font-weight: 600; }
+	.msg.ok { color: #1d6b3a; } .msg.err { color: #a12a2a; }
 </style>
 </head>
 <body>
@@ -37,10 +48,24 @@
 		<h1>Text Messages from AS CPA</h1>
 		<p>We only text you if you have agreed to it. You can sign up in any of these ways:</p>
 		<ul>
+			<li><strong>Online:</strong> use the form below.</li>
 			<li><strong>On your intake form or engagement letter:</strong> check the text message box and add your mobile number.</li>
 			<li><strong>By text:</strong> send <strong>START</strong> to <a href="sms:+18454252024">(845) 425-2024</a>.</li>
 			<li><strong>By asking us:</strong> tell your AS CPA contact which reminders you would like, such as estimated tax due dates, and we will note your request.</li>
 		</ul>
+
+		<h2 id="signup">Sign up for text messages</h2>
+		<form class="signup" id="signup-form" novalidate>
+			<label>Your name<input type="text" name="name" autocomplete="name" required maxlength="120"></label>
+			<label>Mobile number<input type="tel" name="mobile" autocomplete="tel" inputmode="tel" required placeholder="(845) 555-0123"></label>
+			<label>Reminders you would like <small>(optional)</small><input type="text" name="reminders" maxlength="500" placeholder="For example: estimated tax payment due dates"></label>
+			<label class="hp" aria-hidden="true">Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+			<label class="agree"><input type="checkbox" name="consent" required>
+				<span>Yes, AS CPA may text me about my account, including reminders I ask for. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe or HELP for help. Agreeing is not required to use our services. <a href="privacy.html">Privacy Policy &amp; Text Messaging Terms</a></span>
+			</label>
+			<button type="submit">Sign up</button>
+			<div class="msg" id="signup-msg" role="status" aria-live="polite"></div>
+		</form>
 
 		<h2>Including your spouse or bookkeeper</h2>
 		<p>If you would like someone else included in your text conversations with us, we send them a one-time invitation. They are added only if they reply <strong>YES</strong>.</p>
@@ -67,5 +92,30 @@
 	</div>
 </footer>
 <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+<script>
+(function () {
+	var form = document.getElementById('signup-form');
+	var msg = document.getElementById('signup-msg');
+	var show = function (text, ok) { msg.textContent = text; msg.className = 'msg ' + (ok ? 'ok' : 'err'); };
+	form.addEventListener('submit', function (e) {
+		e.preventDefault();
+		var f = form.elements;
+		if (!f.name.value.trim()) return show('Please enter your name.');
+		if (f.mobile.value.replace(/\D/g, '').length < 10) return show('Please enter your 10-digit mobile number.');
+		if (!f.consent.checked) return show('Please check the box to agree to receive texts.');
+		var btn = form.querySelector('button');
+		btn.disabled = true;
+		fetch('https://signup-production-c4be.up.railway.app/api/sms-signup', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ name: f.name.value, mobile: f.mobile.value, reminders: f.reminders.value, website: f.website.value, consent: true, source: location.href })
+		}).then(function (r) { return r.json(); }).then(function (j) {
+			if (j.ok) { form.reset(); show('Thank you. You are signed up for text messages from AS CPA.', true); }
+			else show(j.error || 'Something went wrong. Please call (845) 425-2024.');
+		}).catch(function () { show('Something went wrong. Please call (845) 425-2024.'); })
+		.finally(function () { btn.disabled = false; });
+	});
+})();
+</script>
 </body>
 </html>
