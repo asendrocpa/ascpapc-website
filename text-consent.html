@@ -4,19 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Text Messages from AS CPA | AS CPA PLLC</title>
-<meta name="description" content="How clients of AS CPA PLLC agree to receive text messages, with the consent wording used on our client intake form and engagement letter.">
+<meta name="description" content="Sign up online to receive text messages from AS CPA PLLC about your account.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=4">
 <style>
-	.form-sample { border: 2px solid var(--line); border-radius: var(--radius); padding: 24px; background: #fff; max-width: 640px; }
-	.form-sample .row { margin-bottom: 14px; }
-	.form-sample .lbl { display: block; font-size: 13px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
-	.form-sample .line { border-bottom: 1px solid #9aa6b2; height: 26px; }
-	.check { display: flex; gap: 12px; align-items: flex-start; margin-top: 18px; }
-	.box { flex: 0 0 22px; height: 22px; border: 2px solid var(--ink); border-radius: 3px; margin-top: 2px; }
 	.signup { border: 1px solid var(--line); border-top: 5px solid var(--accent); border-radius: var(--radius); padding: 24px; background: #f3f8f8; max-width: 640px; margin: 8px 0 12px; }
 	.signup label { display: block; font-weight: 600; margin-bottom: 14px; }
 	.signup label small { font-weight: 400; color: var(--ink-soft); }
@@ -46,13 +40,7 @@
 <main class="legal">
 	<div class="wrap">
 		<h1>Text Messages from AS CPA</h1>
-		<p>We only text you if you have agreed to it. You can sign up in any of these ways:</p>
-		<ul>
-			<li><strong>Online:</strong> use the form below.</li>
-			<li><strong>On your intake form or engagement letter:</strong> check the text message box and add your mobile number.</li>
-			<li><strong>By text:</strong> send <strong>START</strong> to <a href="sms:+18454252024">(845) 425-2024</a>.</li>
-			<li><strong>By asking us:</strong> tell your AS CPA contact which reminders you would like, such as estimated tax due dates, and we will note your request.</li>
-		</ul>
+		<p>Clients can sign up below to get text messages from AS CPA about their account: reminders they ask for (such as estimated tax payment due dates), document requests, appointment reminders, filing status updates, and conversations with our staff. We only text you if you check the box agreeing to it.</p>
 
 		<h2 id="signup">Sign up for text messages</h2>
 		<form class="signup" id="signup-form" novalidate>
@@ -60,25 +48,15 @@
 			<label>Mobile number<input type="tel" name="mobile" autocomplete="tel" inputmode="tel" required placeholder="(845) 555-0123"></label>
 			<label>Reminders you would like <small>(optional)</small><input type="text" name="reminders" maxlength="500" placeholder="For example: estimated tax payment due dates"></label>
 			<label class="hp" aria-hidden="true">Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
-			<label class="agree"><input type="checkbox" name="consent" required>
-				<span>Yes, AS CPA may text me about my account, including reminders I ask for. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe or HELP for help. Agreeing is not required to use our services. <a href="privacy.html">Privacy Policy &amp; Text Messaging Terms</a></span>
+			<label class="agree"><input type="checkbox" name="consent">
+				<span>By checking this box and providing your mobile number, you agree to receive text messages from AS CPA about your account, including reminders you request. Message frequency varies. Message and data rates may apply. Reply STOP to opt out. Reply HELP for help. Consent is not a condition of our services. Your mobile information will not be sold or shared with third parties for promotional or marketing purposes. <a href="privacy.html#sms">Privacy Policy &amp; Text Messaging Terms</a></span>
 			</label>
-			<button type="submit">Sign up</button>
+			<button type="submit">Submit</button>
 			<div class="msg" id="signup-msg" role="status" aria-live="polite"></div>
 		</form>
 
 		<h2>Including your spouse or bookkeeper</h2>
 		<p>If you would like someone else included in your text conversations with us, we send them a one-time invitation. They are added only if they reply <strong>YES</strong>.</p>
-
-		<h2>The text message box on our intake form</h2>
-		<div class="form-sample" role="img" aria-label="The text message consent box on the AS CPA client intake form">
-			<div class="row"><span class="lbl">Name</span><div class="line"></div></div>
-			<div class="row"><span class="lbl">Mobile number</span><div class="line"></div></div>
-			<div class="check">
-				<span class="box" aria-hidden="true"></span>
-				<span>Yes, AS CPA may text me about my account, including reminders I ask for. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe or HELP for help. Agreeing is not required to use our services. <a href="privacy.html">Privacy Policy &amp; Text Messaging Terms</a></span>
-			</div>
-		</div>
 
 		<h2>Stopping texts</h2>
 		<p>Reply <strong>STOP</strong> to any message and we will stop texting you. Reply <strong>HELP</strong> for help, or call <a href="tel:+18454252024">(845) 425-2024</a>. We never share or sell your mobile number or your consent. Full terms: <a href="privacy.html#sms">Text Messaging Terms</a>.</p>
@@ -102,15 +80,19 @@
 		var f = form.elements;
 		if (!f.name.value.trim()) return show('Please enter your name.');
 		if (f.mobile.value.replace(/\D/g, '').length < 10) return show('Please enter your 10-digit mobile number.');
-		if (!f.consent.checked) return show('Please check the box to agree to receive texts.');
+		var consent = f.consent.checked;
 		var btn = form.querySelector('button');
 		btn.disabled = true;
 		fetch('https://signup-production-c4be.up.railway.app/api/sms-signup', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ name: f.name.value, mobile: f.mobile.value, reminders: f.reminders.value, website: f.website.value, consent: true, source: location.href })
+			body: JSON.stringify({ name: f.name.value, mobile: f.mobile.value, reminders: f.reminders.value, website: f.website.value, consent: consent, source: location.href })
 		}).then(function (r) { return r.json(); }).then(function (j) {
-			if (j.ok) { form.reset(); show('Thank you. You are signed up for text messages from AS CPA.', true); }
+			if (j.ok) {
+				form.reset();
+				show(consent ? 'Thank you. You are signed up for text messages from AS CPA.'
+					: 'Thank you. We saved your details. Because the box was not checked, we will not send you text messages.', true);
+			}
 			else show(j.error || 'Something went wrong. Please call (845) 425-2024.');
 		}).catch(function () { show('Something went wrong. Please call (845) 425-2024.'); })
 		.finally(function () { btn.disabled = false; });
